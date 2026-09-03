@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# A scanned QR hard-loads /p/:slug. Without this, Netlify looks for a file at
+# that path, finds none, and returns 404. Send every route to index.html and
+# let the app router handle it.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

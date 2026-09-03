@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #f7f7f9;
+  }
+
+  /* Visible focus only for keyboard users, never on mouse click. */
+  :focus-visible {
+    outline: 2px solid #4e2be8;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Inputs inherit the app's type stack instead of the UA default. */
+  input,
+  select,
+  button,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Respect reduced-motion preferences. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Tabular figures for metrics so digits don't jitter as counters update. */
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      #f0f0f3 0px,
+      #e6e6ea 200px,
+      #f0f0f3 400px
+    );
+    background-size: 800px 100%;
+  }
+}
