@@ -78,18 +78,18 @@ function Landing({ onStart }) {
       </nav>
 
       {/* Hero */}
-      <section className="bg-[#0A0A14] text-white px-6 py-16">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <section className="bg-[#0A0A14] text-white px-6 py-24 md:py-32">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 mb-6 text-[12px] font-bold" style={{ background: "rgba(107,47,217,0.3)", color: "#C4A8FF" }}>
               <span className="w-2 h-2 rounded-full bg-[#C4A8FF]" /> NEW — Timestamp QR Codes are here →
             </div>
-            <h1 className="text-[52px] leading-[1.02] font-extrabold tracking-[-0.04em]">
-              Turn any screen<br />
-              <span style={{ color: C.purple }}>into instant action.</span>
+            <h1 className="text-hero" style={{ color: "white" }}>
+              Turn your viewers<br />
+              <span style={{ color: "#A78BFA" }}>into action.</span>
             </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-[#A1A1B5] max-w-lg">
-              Create scannable QR codes for your videos, podcasts, presentations and more. Give your audience a better way to engage — without leaving what they're watching.
+            <p className="text-body-lg mt-6 max-w-lg" style={{ color: "#A1A1B5" }}>
+              Display a QR code on your video. Viewers on TVs, desktops, and projectors scan it instantly — without leaving what they're watching.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Btn size="lg" onClick={onStart}>Get Started Free <ArrowRight size={15} /></Btn>
@@ -101,8 +101,8 @@ function Landing({ onStart }) {
             </div>
             <div className="mt-8 flex items-center gap-3">
               <div className="flex -space-x-2">
-                {[1,2,3,4].map((i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0A0A14] bg-[#6B2FD9] flex items-center justify-center text-white text-[10px] font-bold">{i}</div>
+                {["A","B","C","D"].map((l) => (
+                  <div key={l} className="w-8 h-8 rounded-full border-2 border-[#0A0A14] bg-[#6B2FD9] flex items-center justify-center text-white text-[10px] font-bold">{l}</div>
                 ))}
               </div>
               <div>
@@ -114,12 +114,8 @@ function Landing({ onStart }) {
           {/* Hero visual */}
           <div className="relative">
             <div className="rounded-2xl overflow-hidden relative aspect-video bg-[#1C1C2E]">
-              <img src="/hero-man.png" alt="Creator" className="w-full h-full object-cover opacity-80" />
-              <div className="absolute top-4 right-4 bg-white rounded-xl p-3 shadow-xl">
-                <p className="text-[11px] font-bold text-[#0A0A14] text-center mb-2">SCAN TO GET<br />THE FREE CHECKLIST</p>
-                <p className="text-center text-[#8A8A9C] text-[11px]">↓</p>
-                <QR text={publicUrl("free-checklist")} size={80} quiet={1} />
-              </div>
+              <img src="/hero-youtube.png" alt="Creator using ClearpathQR on YouTube" className="w-full h-full object-cover" />
+
             </div>
             <div className="mt-3 flex justify-center gap-6 text-[12px] text-[#A1A1B5]">
               {["YouTube","TV Screens","Live Streams","Podcasts","Presentations"].map((p) => (
@@ -160,12 +156,12 @@ function Landing({ onStart }) {
 
       {/* How it works */}
       <section id="how" className="py-16 px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B2FD9] mb-4">HOW CLEARPATHQR WORKS</p>
-            <h2 className="text-[40px] font-extrabold tracking-[-0.03em] text-[#0A0A14] leading-tight">
+            <h2 className="text-section text-[#0A0A14]">
               Three simple steps.<br />
-              <span style={{ color: C.purple }}>Powerful results.</span>
+              <span style={{ color: "#6B2FD9" }}>Powerful results.</span>
             </h2>
             <div className="mt-10 space-y-8">
               {[
@@ -183,8 +179,8 @@ function Landing({ onStart }) {
               ))}
             </div>
           </div>
-          <div className="rounded-2xl overflow-hidden bg-[#0A0A14] relative aspect-video">
-            <img src="/hero-woman.jpeg" alt="Creator" className="w-full h-full object-cover opacity-80" />
+          <div className="rounded-2xl overflow-hidden bg-[#0A0A14] relative aspect-video shadow-2xl">
+            <img src="/hero-woman.jpeg" alt="Creator" className="w-full h-full object-cover" />
             <div className="absolute top-4 right-4 bg-white rounded-xl p-2 shadow-xl">
               <p className="text-[10px] font-bold text-[#0A0A14] text-center mb-1">SCAN TO SAVE<br/>THE RESOURCES</p>
               <QR text={publicUrl("resources")} size={70} quiet={1} />
@@ -202,8 +198,8 @@ function Landing({ onStart }) {
       <section id="features" className="py-16 px-6 bg-[#F7F7FC]">
         <div className="max-w-7xl mx-auto text-center mb-12">
           <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B2FD9] mb-3">POWERFUL FEATURES</p>
-          <h2 className="text-[38px] font-extrabold tracking-[-0.03em] text-[#0A0A14]">
-            Everything you need to turn<br />attention into <span style={{ color: C.purple }}>action.</span>
+          <h2 className="text-section text-[#0A0A14]">
+            Everything you need to turn<br />attention into <span style={{ color: "#6B2FD9" }}>action.</span>
           </h2>
         </div>
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
@@ -228,8 +224,8 @@ function Landing({ onStart }) {
       <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto text-center mb-10">
           <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#6B2FD9] mb-3">ONE QR CODE. ENDLESS POSSIBILITIES.</p>
-          <h2 className="text-[38px] font-extrabold tracking-[-0.03em] text-[#0A0A14]">
-            Built for every <span style={{ color: C.purple }}>creator</span> and <span style={{ color: C.purple }}>every business.</span>
+          <h2 className="text-section text-[#0A0A14]">
+            Built for every <span style={{ color: "#6B2FD9" }}>creator</span> and <span style={{ color: "#6B2FD9" }}>every business.</span>
           </h2>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -249,17 +245,12 @@ function Landing({ onStart }) {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-16 px-6 bg-[#F7F7FC]">
-        <LandingPricing onStart={onStart} />
-      </section>
-
       {/* CTA */}
       <section className="py-14 px-6 bg-[#0A0A14] text-white">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-[28px] font-extrabold tracking-[-0.03em]">Don't let your next viewer be your last.</h2>
-            <p className="mt-2 text-[14px] text-[#A1A1B5]">Make it easy for your audience to take action while they're still watching.</p>
+            <h2 className="text-[32px] font-bold tracking-[-0.03em] leading-tight">Don't let your next viewer be your last.</h2>
+            <p className="mt-3 text-body" style={{ color: "#A1A1B5" }}>Make it easy for your audience to take action while they're still watching.</p>
           </div>
           <Btn size="lg" onClick={onStart}>Get Started Free <ArrowRight size={15} /></Btn>
         </div>
@@ -408,10 +399,10 @@ function PublicPage({ campaign, channel, onClickLink, onLead, width="100%" }) {
   return (
     <div style={{ width, background: th.bg, fontFamily: "system-ui,sans-serif", borderRadius: 16, overflow: "hidden", border: "1px solid #E8E8F0" }}>
       <div className="px-5 pt-6 pb-6">
-        {/* Avatar / profile picture */}
+        {/* Page image - renders at 16:9 with object-cover so it always looks good */}
         {campaign.picture && (
-          <div className="mb-4">
-            <img src={campaign.picture} alt="" className="w-full rounded-xl object-cover" style={{ maxHeight: 160 }} />
+          <div className="mb-4 rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+            <img src={campaign.picture} alt="" className="w-full h-full object-cover" loading="eager" />
           </div>
         )}
         <div className="flex flex-col items-center text-center mb-4">
@@ -432,7 +423,7 @@ function PublicPage({ campaign, channel, onClickLink, onLead, width="100%" }) {
                 style={{ background: th.card, border: `1px solid rgba(0,0,0,0.06)` }}>
                 <Icon size={16} style={{ color: th.sub }} className="shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-[14px] font-semibold" style={{ color: th.text }}>{l.label}</p>
+                  <p className="text-[14px] font-semibold leading-snug" style={{ color: th.text, wordBreak: "break-word", overflowWrap: "anywhere" }}>{l.label}</p>
                   {l.note && <p className="truncate text-[11.5px]" style={{ color: th.sub }}>{l.note}</p>}
                 </div>
                 <ChevronRight size={15} style={{ color: th.sub }} />
@@ -454,7 +445,7 @@ function PublicPage({ campaign, channel, onClickLink, onLead, width="100%" }) {
                 {gate.sub && <p className="mt-1 text-[12.5px]" style={{ color: th.sub }}>{gate.sub}</p>}
                 <div className="mt-3 space-y-2">
                   {gate.askName && <input value={name} onChange={(e) => setName(e.target.value)} placeholder="First name" className="w-full outline-none rounded-lg px-3 py-2.5 text-[13.5px] border border-[#E8E8F0] bg-white text-[#0A0A14]" />}
-                  <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" type="email" className="w-full outline-none rounded-lg px-3 py-2.5 text-[13.5px] border border-[#E8E8F0] bg-white text-[#0A0A14]" />
+                  <input value={email} onChange={(e) => setEmail(e.target.value.slice(0, 254))} placeholder="your@email.com" type="email" inputMode="email" autoComplete="email" className="w-full outline-none rounded-lg px-3 py-2.5 text-[13.5px] border border-[#E8E8F0] bg-white text-[#0A0A14] min-w-0" style={{ maxWidth: "100%", boxSizing: "border-box" }} />
                   {error && <p className="text-xs text-red-500">{error}</p>}
                   <button onClick={submit} disabled={busy} className="w-full rounded-lg py-2.5 font-bold text-[13.5px] flex items-center justify-center gap-2 disabled:opacity-60" style={{ background: th.btn, color: th.btnText }}>
                     {busy && <Spinner />}{gate.buttonText || "Send it to me"}
@@ -575,7 +566,7 @@ export default function App() {
     <div className="min-h-screen flex bg-[#F7F7FC] font-sans">
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col shrink-0 w-[220px] bg-white border-r border-[#E8E8F0]">
-        <div className="px-5 py-5"><ClearpathLogo size={28} /></div>
+        <div className="px-5 py-5 cursor-pointer" onClick={() => { setScreen("landing"); setOpenId(null); }}><ClearpathLogo size={28} /></div>
         <nav className="px-3 flex-1">
           {NAV.map((n) => {
             const active = nav === n.id;
@@ -832,6 +823,82 @@ function CampaignDetail({ campaign, state, store, flash, onBack, onUpgrade }) {
 }
 
 // ── Page tab ──────────────────────────────────────────────────────────────────
+
+// Better image upload: proper aspect ratio, good rendering, 10MB limit
+function PageImageUpload({ value, onChange }) {
+  const ref = useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const onFile = async (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { setErr("Please choose a JPG, PNG, or WebP image."); return; }
+    const maxMB = 10;
+    if (file.size > maxMB * 1024 * 1024) { setErr(`Image is too large. Max ${maxMB}MB.`); return; }
+    setErr(""); setBusy(true);
+    try {
+      const dataUrl = await new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            // Resize to max 1200px wide, keep aspect ratio, high quality
+            const maxW = 1200;
+            const scale = img.width > maxW ? maxW / img.width : 1;
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const cv = document.createElement("canvas");
+            cv.width = w; cv.height = h;
+            const ctx = cv.getContext("2d");
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, 0, 0, w, h);
+            res(cv.toDataURL("image/jpeg", 0.88));
+          };
+          img.onerror = () => rej(new Error("Could not read image"));
+          img.src = reader.result;
+        };
+        reader.onerror = () => rej(new Error("Could not read file"));
+        reader.readAsDataURL(file);
+      });
+      onChange(dataUrl);
+    } catch (e) {
+      setErr("Could not process that image. Try another.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div>
+      {value ? (
+        <div className="relative rounded-xl overflow-hidden border border-[#E8E8F0] bg-[#F7F7FC]" style={{ aspectRatio: "16/9" }}>
+          <img src={value} alt="Page image" className="w-full h-full object-cover" />
+          <button onClick={() => onChange("")}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80">
+            <Trash2 size={13} />
+          </button>
+          <button onClick={() => ref.current?.click()}
+            className="absolute bottom-2 right-2 rounded-lg px-3 py-1.5 bg-black/60 text-white text-[12px] font-semibold hover:bg-black/80">
+            Replace
+          </button>
+        </div>
+      ) : (
+        <button onClick={() => ref.current?.click()}
+          className="w-full rounded-xl border-2 border-dashed border-[#E8E8F0] bg-[#F7F7FC] hover:border-[#6B2FD9] hover:bg-[#EDE8FF] transition-colors flex flex-col items-center justify-center gap-2 py-10">
+          <ImageIcon size={28} className="text-[#8A8A9C]" />
+          <p className="text-[14px] font-semibold text-[#3D3D52]">Click to upload an image</p>
+          <p className="text-[12px] text-[#8A8A9C]">JPG, PNG or WebP — max 10MB</p>
+        </button>
+      )}
+      <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+        onChange={(e) => onFile(e.target.files?.[0])} />
+      {busy && <div className="flex items-center gap-2 mt-2 text-[12.5px] text-[#8A8A9C]"><Spinner /> Processing image…</div>}
+      {err && <p className="mt-2 text-[12.5px] text-red-500">{err}</p>}
+    </div>
+  );
+}
+
 function AvatarUpload({ value, onChange, name }) {
   const ref = useRef(null);
   const [busy, setBusy] = useState(false);
@@ -873,24 +940,28 @@ function PageTab({ campaign, update, state, flash, onUpgrade }) {
       {/* Picture */}
       <Card>
         <SectionTitle>Picture</SectionTitle>
-        <p className="mt-1 mb-4 text-[12.5px] text-[#8A8A9C]">Shown at the top of your page — a product shot, your face, or the thumbnail.</p>
-        <AvatarUpload value={campaign.picture||""} onChange={(v) => update({ picture:v })} />
+        <p className="mt-1 mb-4 text-[12.5px] text-[#8A8A9C]">Shown at the top of your page. Max 10MB. Square or landscape works best.</p>
+        <PageImageUpload value={campaign.picture||""} onChange={(v) => update({ picture:v })} />
       </Card>
 
       {/* Headline + subline */}
       <Card>
         <SectionTitle>What people see</SectionTitle>
         <div className="space-y-4 mt-4">
-          <Field label="Headline">
+          <Field label="Headline" hint="Max 100 characters">
             <Input value={campaign.headline} onChange={(v) => {
-              const patch = { headline:v };
-              if (campaign.title===campaign.headline||!campaign.title) patch.title=v;
-              if (!campaign.slugCustom) { let s=slugify(v)||"page-"+campaign.id.slice(0,5); patch.slug=s; }
+              const capped = v.slice(0, 100);
+              const patch = { headline:capped };
+              if (!campaign.title || campaign.title===campaign.headline) patch.title=capped;
+              if (!campaign.slugCustom) { let s=slugify(capped)||"page-"+campaign.id.slice(0,5); patch.slug=s; }
               update(patch);
             }} placeholder="The spreadsheet from this video" />
           </Field>
-          <Field label="Sub-line" hint="Optional">
-            <Input value={campaign.subhead} onChange={(v) => update({ subhead:v })} placeholder="Free download — no signup needed." />
+          {campaign.headline?.length >= 80 && (
+            <p className="text-[11.5px] text-[#8A8A9C]">{100 - (campaign.headline?.length||0)} characters remaining</p>
+          )}
+          <Field label="Sub-line" hint="Optional, max 100 characters">
+            <Input value={campaign.subhead} onChange={(v) => update({ subhead:v.slice(0,100) })} placeholder="Free download — no signup needed." />
           </Field>
         </div>
       </Card>
@@ -1071,10 +1142,17 @@ function QRTab({ campaign, url, state }) {
               </Btn>
               <CopyBtn text={url} size="md" />
             </div>
-            <div className="rounded-lg p-3 bg-[#EDE8FF]">
-              <p className="text-[12px] font-bold text-[#6B2FD9] mb-1">This code points to:</p>
-              <p className="text-[12px] text-[#3D3D52] font-mono break-all">{url}</p>
-              <p className="text-[11.5px] text-[#8A8A9C] mt-1">Scanning this opens the page above — on any phone, anywhere.</p>
+            <div className="rounded-lg p-3 bg-[#EDE8FF] space-y-2">
+              <p className="text-[12px] font-bold text-[#6B2FD9]">How it works:</p>
+              <div className="flex items-start gap-2">
+                <span className="text-[#6B2FD9] font-bold text-[11px] mt-0.5 shrink-0">1.</span>
+                <p className="text-[12px] text-[#3D3D52]">Someone scans this QR → lands on YOUR page (with your headline, image, and links)</p>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-[#6B2FD9] font-bold text-[11px] mt-0.5 shrink-0">2.</span>
+                <p className="text-[12px] text-[#3D3D52]">They tap a link on your page → goes to the URL you entered (e.g. vuemagnet.com)</p>
+              </div>
+              <p className="text-[11px] text-[#8A8A9C] pt-1 border-t border-[#D4C8FF]">QR destination: <span className="font-mono break-all">{url}</span></p>
             </div>
           </div>
         </div>
