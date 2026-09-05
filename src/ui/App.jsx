@@ -60,7 +60,7 @@ function ClearpathLogo({ size = 28 }) {
   );
 }
 
-function Landing({ onStart }) {
+function Landing({ onStart, onSignIn }) {
   return (
     <div className="bg-white font-sans min-h-screen">
       {/* Nav */}
@@ -72,8 +72,8 @@ function Landing({ onStart }) {
           <a href="#pricing" className="hover:text-[#6B2FD9]">Pricing</a>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={onStart} className="text-[13.5px] font-semibold text-[#3D3D52] hover:text-[#6B2FD9]">Log in</button>
-          <Btn onClick={onStart}>Get Started Free <ArrowRight size={14} /></Btn>
+          <button onClick={onSignIn || onStart} className="text-[13.5px] font-semibold text-[#3D3D52] hover:text-[#6B2FD9]">Log in</button>
+          <Btn onClick={onStart}>Get Started Free — it's free <ArrowRight size={14} /></Btn>
         </div>
       </nav>
 
@@ -526,7 +526,18 @@ export default function App() {
   const [nav, setNav] = useState("campaigns");
   const [openId, setOpenId] = useState(null);
   const [toast, setToast] = useState("");
+  const [pendingPage, setPendingPage] = useState(null);   // page built before signup
+  const [authTrigger, setAuthTrigger] = useState("save"); // why signup was triggered
   const booted = useRef(false);
+
+  // Ask user to sign up at the right moment (when they try to do something valuable).
+  const requireAuth = useCallback((reason, page) => {
+    if (state.meta?.user) return false; // already signed in
+    setPendingPage(page || null);
+    setAuthTrigger(reason || "save");
+    setScreen("auth");
+    return true; // caller should stop
+  }, [state.meta?.user]);
 
   const publicSlug = useMemo(() => {
     if (typeof window === "undefined") return null;
@@ -534,31 +545,68 @@ export default function App() {
     return m ? decodeURIComponent(m[1]) : null;
   }, []);
 
+  const isAuthCallback = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.location.pathname === "/auth/callback" ||
+      window.location.hash.includes("access_token") ||
+      window.location.hash.includes("type=magiclink");
+  }, []);
+
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
-    store.load().then((s) => { if (!publicSlug && s.meta?.user) setScreen("app"); });
+
+    const boot = async () => {
+      // Handle OAuth/magic-link redirect back into the app.
+      if (isAuthCallback && store.handleAuthCallback) {
+        const r = await store.handleAuthCallback();
+        if (r.ok) {
+          // Migrate any page the user built before signing up.
+          const pending = sessionStorage.getItem("cpqr:pending_page");
+          if (pending) {
+            try {
+              const campaign = JSON.parse(pending);
+              if (store.migratePage) await store.migratePage(campaign);
+              sessionStorage.removeItem("cpqr:pending_page");
+            } catch {}
+          }
+          // Clean up the URL and go to app.
+          window.history.replaceState({}, "", "/");
+          setScreen("app");
+          return;
+        }
+      }
+      const s = await store.load();
+      if (!publicSlug && s.meta?.user) setScreen("app");
+    };
+
+    boot();
     const flush = () => store.flush();
     window.addEventListener("beforeunload", flush);
     document.addEventListener("visibilitychange", flush);
     return () => { window.removeEventListener("beforeunload", flush); document.removeEventListener("visibilitychange", flush); };
-  }, [store, publicSlug]);
+  }, [store, publicSlug, isAuthCallback]);
 
   const flash = useCallback((m) => { setToast(m); setTimeout(() => setToast(""), 2400); }, []);
 
-  const signIn = (email) => {
+  const signIn = async (email, pendingPage) => {
     const handle = email.split("@")[0];
     if (!state.meta.channel?.slug) {
       store.setMeta({ channel: { ...state.meta.channel, name: handle, handle: "@" + handle, slug: slugify(handle) } });
     }
     if (store.backend !== "supabase") store.setMeta({ user: { email, joined: Date.now() } });
+    // Migrate a page that was built before signing up.
+    if (pendingPage && store.migratePage) await store.migratePage(pendingPage);
     setScreen("app");
   };
 
   if (!state.ready) return <div className="min-h-screen flex items-center justify-center bg-white gap-2 text-[#8A8A9C] font-mono text-[13px]"><Spinner /> loading</div>;
   if (publicSlug) return <PublicRoute slug={publicSlug} state={state} store={store} />;
-  if (screen === "landing") return <Landing onStart={() => setScreen("auth")} />;
-  if (screen === "auth") return <Auth onDone={signIn} onBack={() => setScreen("landing")} store={store} />;
+  if (screen === "landing") return <Landing
+    onStart={() => setScreen("app")}
+    onSignIn={() => { setAuthTrigger("signin"); setScreen("auth"); }}
+  />;
+  if (screen === "auth") return <Auth onDone={signIn} onBack={() => { setScreen(pendingPage ? "app" : "landing"); }} store={store} pendingPage={pendingPage} triggerReason={authTrigger} />;
 
   const open = state.campaigns.find((c) => c.id === openId);
 
@@ -613,10 +661,11 @@ export default function App() {
           {open ? (
             <CampaignDetail campaign={open} state={state} store={store} flash={flash}
               onBack={() => setOpenId(null)}
-              onUpgrade={() => { setOpenId(null); setNav("pricing"); }} />
+              onUpgrade={() => { setOpenId(null); setNav("pricing"); }}
+              requireAuth={requireAuth} />
           ) : (
             <>
-              {nav === "campaigns" && <Campaigns state={state} store={store} onOpen={setOpenId} flash={flash} onUpgrade={() => setNav("pricing")} />}
+              {nav === "campaigns" && <Campaigns state={state} store={store} onOpen={setOpenId} flash={flash} onUpgrade={() => setNav("pricing")} requireAuth={requireAuth} />}
               {nav === "leads"     && <Leads state={state} store={store} flash={flash} />}
               {nav === "analytics" && <Analytics state={state} store={store} onUpgrade={() => setNav("pricing")} flash={flash} />}
               {nav === "brand"     && <BrandPresets state={state} store={store} flash={flash} />}
@@ -669,7 +718,7 @@ function newCampaign(state, title="") {
   };
 }
 
-function Campaigns({ state, store, onOpen, flash, onUpgrade }) {
+function Campaigns({ state, store, onOpen, flash, onUpgrade, requireAuth }) {
   const [q, setQ] = useState("");
   const [showArchived, setShowArchived] = useState(false);
   const limits = limitsFor(state.meta?.plan);
@@ -688,6 +737,9 @@ function Campaigns({ state, store, onOpen, flash, onUpgrade }) {
     onOpen(c.id);
   };
 
+  // Show a gentle "save your work" nudge if they've built a page but haven't signed up
+  const unsavedCount = !state.meta?.user ? state.campaigns.length : 0;
+
   return (
     <>
       <Header title="Video pages" sub="One page per upload. The QR on screen points here."
@@ -697,6 +749,20 @@ function Campaigns({ state, store, onOpen, flash, onUpgrade }) {
         <div className="rounded-xl px-4 py-3 mb-5 flex items-center gap-3 bg-[#EDE8FF]">
           <Lock size={15} className="text-[#6B2FD9] shrink-0" />
           <p className="text-[13px] text-[#6B2FD9]">Free plan is limited to 2 pages. <button onClick={onUpgrade} className="font-bold underline">Upgrade to Pro</button> for unlimited.</p>
+        </div>
+      )}
+
+      {unsavedCount > 0 && (
+        <div className="rounded-xl px-4 py-3 mb-5 flex items-center justify-between gap-3 bg-[#0A0A14] text-white">
+          <div className="flex items-center gap-2.5">
+            <span className="text-lg">💾</span>
+            <p className="text-[13px]">
+              <span className="font-bold">Your page isn't saved yet.</span> Create a free account to keep it and download your QR code.
+            </p>
+          </div>
+          <Btn size="sm" onClick={() => requireAuth && requireAuth("save", state.campaigns[0])} className="shrink-0">
+            Save free
+          </Btn>
         </div>
       )}
 
@@ -753,19 +819,30 @@ const TABS = [
   { id:"stats",  label:"Performance" },
 ];
 
-function StepBar({ tab, setTab }) {
+function StepBar({ tab, setTab, isSignedIn, onSavePrompt }) {
   const idx = TABS.findIndex((t) => t.id === tab);
   const prev = TABS[idx-1]; const next = TABS[idx+1];
   const LABELS = { design:"Next: Design", qr:"Next: Get QR Code", stats:"Next: Performance" };
   return (
     <div className="mt-8 flex items-center justify-between gap-3">
       {prev ? <Btn variant="ghost" onClick={() => setTab(prev.id)}><ArrowLeft size={14} /> Back</Btn> : <span />}
-      {next && <Btn onClick={() => setTab(next.id)}>{LABELS[next.id]||"Next"} <ArrowRight size={14} /></Btn>}
+      {next && (
+        <Btn onClick={() => {
+          // When moving to the QR tab, prompt sign-up if not authenticated
+          if (next.id === "qr" && !isSignedIn && onSavePrompt) {
+            onSavePrompt();
+            return;
+          }
+          setTab(next.id);
+        }}>
+          {LABELS[next.id]||"Next"} <ArrowRight size={14} />
+        </Btn>
+      )}
     </div>
   );
 }
 
-function CampaignDetail({ campaign, state, store, flash, onBack, onUpgrade }) {
+function CampaignDetail({ campaign, state, store, flash, onBack, onUpgrade, requireAuth }) {
   const [tab, setTab] = useState("page");
   const update = (patch) => store.updateCampaign(campaign.id, patch);
   const url = publicUrl(campaign.slug);
@@ -795,11 +872,12 @@ function CampaignDetail({ campaign, state, store, flash, onBack, onUpgrade }) {
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-8 items-start">
         <div>
-          {tab==="page"   && <PageTab campaign={campaign} update={update} state={state} flash={flash} onUpgrade={onUpgrade} />}
+          {tab==="page"   && <PageTab campaign={campaign} update={update} state={state} flash={flash} onUpgrade={onUpgrade} requireAuth={requireAuth} />}
           {tab==="design" && <DesignTab campaign={campaign} update={update} />}
-          {tab==="qr"     && <QRTab campaign={campaign} url={url} state={state} />}
+          {tab==="qr"     && <QRTab campaign={campaign} url={url} state={state} requireAuth={requireAuth} />}
           {tab==="stats"  && <StatsTab campaign={campaign} state={state} onUpgrade={onUpgrade} />}
-          <StepBar tab={tab} setTab={setTab} />
+          <StepBar tab={tab} setTab={setTab} isSignedIn={!!state.meta?.user}
+            onSavePrompt={() => requireAuth && requireAuth("save", campaign)} />
           <div className="mt-8 pt-5 border-t border-[#E8E8F0]">
             <div className="flex gap-2">
               <Btn variant="ghost" size="sm" onClick={() => update({ archived: !campaign.archived })}>{campaign.archived ? "Restore" : "Archive"}</Btn>
@@ -1094,7 +1172,7 @@ function DesignTab({ campaign, update }) {
 }
 
 // ── QR tab ────────────────────────────────────────────────────────────────────
-function QRTab({ campaign, url, state }) {
+function QRTab({ campaign, url, state, requireAuth }) {
   const [fg, setFg] = useState("#0A0A14");
   const [bg, setBg] = useState("#FFFFFF");
   const [scanLabel, setScanLabel] = useState(true);
@@ -1137,8 +1215,12 @@ function QRTab({ campaign, url, state }) {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 pt-1">
-              <Btn onClick={() => downloadQRPng(url, fg, bg, campaign.slug, 16, { scanLabel, badge:withBadge?(state.meta?.channel?.name||"C"):null })}>
-                <Download size={13} /> Download PNG
+              <Btn onClick={() => {
+                // Trigger sign-up if not authenticated yet
+                if (requireAuth && requireAuth("download", campaign)) return;
+                downloadQRPng(url, fg, bg, campaign.slug, 16, { scanLabel, badge:withBadge?(state.meta?.channel?.name||"C"):null });
+              }}>
+                <Download size={13} /> {state.meta?.user ? "Download PNG" : "Save & Download"}
               </Btn>
               <CopyBtn text={url} size="md" />
             </div>

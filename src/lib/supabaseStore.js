@@ -159,7 +159,14 @@ export function createSupabaseStore(sb) {
   /* auth ------------------------------------------------------------------- */
 
   async function sendCode(email) {
-    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+        // Force a 6-digit code, not a magic link click
+        data: {},
+      },
+    });
     return { ok: !error, error: error?.message };
   }
   async function verifyCode(email, token) {
@@ -352,7 +359,7 @@ export function createSupabaseStore(sb) {
   return {
     backend: "supabase",
     load, subscribe, snapshot,
-    sendCode, verifyCode, signOut,
+    sendCode, verifyCode, sendMagicLink, signInWithGoogle, handleAuthCallback, migratePage, signOut,
     setMeta, setCampaigns, addCampaign, updateCampaign, removeCampaign,
     record, addLead, captureLeadPublic, deleteLead,
     getLeadPage, searchLeads, streamLeads,
